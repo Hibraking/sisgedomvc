@@ -1,0 +1,5 @@
+# SISGEDO MVC — Solo la carpeta public/ es visible desde la web.
+# Todo lo demás (app/, config/, storage/, tests/) queda inaccesible.
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(.*)$ public/$1 [L]

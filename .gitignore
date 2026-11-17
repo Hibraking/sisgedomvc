@@ -1,0 +1,4 @@
+/config/db_clave.php
+/config/correo_clave.php
+/storage/logs/*
+!/storage/logs/.gitkeep
