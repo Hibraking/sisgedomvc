@@ -461,11 +461,7 @@ $("#dr_guardar").on("click", function () {
       // Documento sin destino (p. ej. de Mesa de Partes Virtual): recién ahora
       // tiene oficina asignada, así que se genera su cargo automáticamente.
       if (derivRegSinDestino && derivRegExp !== "") {
-        window.open(
-          URL_CARGO +
-            encodeURIComponent(derivRegExp),
-          "_blank",
-        );
+        window.open(URL_CARGO + encodeURIComponent(derivRegExp), "_blank");
       }
       location.reload();
     })
@@ -515,7 +511,9 @@ function eliminarReg(el) {
       location.reload();
     })
     .fail(function (xhr) {
-      alert("Error al eliminar (" + xhr.status + "): " + (xhr.responseText || ""));
+      alert(
+        "Error al eliminar (" + xhr.status + "): " + (xhr.responseText || ""),
+      );
     });
 }
 

@@ -38,6 +38,7 @@ class RegistroService
         if ($d['folios'] < 1) $errores[] = 'Ingrese un número de folios válido.';
         $oficinas = array_values(array_filter(array_map('intval', explode(',', $cadena))));
         if (!$oficinas) $errores[] = 'Seleccione al menos una oficina destino.';
+        if (!$this->textoValido($d)) $errores[] = 'Hay texto con caracteres no válidos; vuelva a escribirlo.';
         if ($errores) {
             $this->error = implode(' ', $errores);
             return false;
@@ -51,10 +52,21 @@ class RegistroService
             }
             $d['adjunto'] = $g['nombre'];
         }
-        $d['nro_exp'] = NumeracionService::nuevoExpediente();
-        foreach ($oficinas as $ofi) {
-            $d['idoficina'] = $ofi;
-            RegistroModel::insertar($d);
+        $db = \App\Core\Database::pdo();
+        try {
+            $db->beginTransaction();               // todos los destinos o ninguno
+            $d['nro_exp'] = NumeracionService::nuevoExpediente();
+            foreach ($oficinas as $ofi) {
+                $d['idoficina'] = $ofi;
+                RegistroModel::insertar($d);
+            }
+            $db->commit();
+        } catch (\Exception $e) {
+            if ($db->inTransaction()) $db->rollBack();
+            if ($d['adjunto']) @unlink(ArchivoService::carpeta('REGISTRO') . '/' . $d['adjunto']);
+            error_log('registrar: ' . $e->getMessage());
+            $this->error = 'No se pudo registrar el documento. Intente nuevamente.';
+            return false;
         }
         ArchivoService::cvd('EXPEDIENTE', $d['nro_exp']);   // código de verificación del cargo (QR)
         return $d['nro_exp'];
@@ -68,6 +80,10 @@ class RegistroService
             return false;
         }
         $d = $this->datos($p);
+        if (!$this->textoValido($d)) {
+            $this->error = 'Hay texto con caracteres no válidos; vuelva a escribirlo.';
+            return false;
+        }
         $d['idoficina'] = (int)(isset($p['lista_oficinas']) ? $p['lista_oficinas'] : '') ?: null;
         $adjunto = null;
         if ($archivo && !empty($archivo['tmp_name']) && is_uploaded_file($archivo['tmp_name'])) {
@@ -78,8 +94,23 @@ class RegistroService
             }
             $adjunto = $g['nombre'];
         }
-        RegistroModel::modificar($codigo, $d);
-        if ($adjunto !== null) RegistroModel::actualizarAdjunto($codigo, $adjunto);
+        try {
+            RegistroModel::modificar($codigo, $d);
+            if ($adjunto !== null) RegistroModel::actualizarAdjunto($codigo, $adjunto);
+        } catch (\Exception $e) {
+            error_log('modificar registro: ' . $e->getMessage());
+            $this->error = 'No se pudo guardar el cambio. Intente nuevamente.';
+            return false;
+        }
+        return true;
+    }
+
+    /** Los textos deben venir en UTF-8 válido (si no, la base de datos los rechaza). */
+    private function textoValido(array $d)
+    {
+        foreach ($d as $v) {
+            if (is_string($v) && !mb_check_encoding($v, 'UTF-8')) return false;
+        }
         return true;
     }
 

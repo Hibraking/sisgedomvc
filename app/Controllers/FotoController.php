@@ -7,8 +7,8 @@ use App\Core\Session;
 use App\Models\UsuarioModel;
 
 /**
- * Foto de perfil del usuario en sesión. Se lee de la carpeta de sisgedov2
- * (images/perfiles) para no duplicar archivos mientras dura la migración.
+ * Foto de perfil del usuario en sesión (storage/archivos/perfiles; las fotos
+ * antiguas aún no trasladadas se leen de la carpeta de sisgedov2).
  */
 class FotoController extends Controller
 {
@@ -19,7 +19,7 @@ class FotoController extends Controller
             $archivo = UsuarioModel::foto(Auth::id());
             Session::set('foto_perfil', $archivo);
         }
-        $ruta = config('ruta_sisgedov2') . '/images/perfiles/' . basename((string)$archivo);
+        $ruta = \App\Services\ArchivoService::ruta('PERFIL', (string)$archivo);
         if ($archivo === '' || !is_file($ruta)) {
             http_response_code(404);
             exit;
@@ -44,6 +44,6 @@ class FotoController extends Controller
             $archivo = UsuarioModel::foto(Auth::id());
             Session::set('foto_perfil', $archivo);
         }
-        return $archivo !== '' && is_file(config('ruta_sisgedov2') . '/images/perfiles/' . basename((string)$archivo));
+        return $archivo !== '' && is_file(\App\Services\ArchivoService::ruta('PERFIL', (string)$archivo));
     }
 }

@@ -104,7 +104,7 @@
                 <div><span class="st"><span class="dot <?= $dotE ?>"></span> <?= h($est) ?></span></div>
                 <div class="muted"><?= h($r[8]) ?></div>
                 <div class="act">
-                  <a class="ab ab-b" title="Seguimiento" target="_blank" href="<?= h($urlV2) ?>/reportes/consulta_interna.php?codigo_doc=<?= h($r[0]) ?>" onclick="event.stopPropagation()"><i class="fa fa-eye"></i></a>
+                  <a class="ab ab-b" title="Seguimiento" target="_blank" href="<?= h(url('reportes/consulta-interna')) ?>?codigo_doc=<?= h($r[0]) ?>" onclick="event.stopPropagation()"><i class="fa fa-eye"></i></a>
                   <?php if ($editable) { ?>
                     <button class="ab ab-g" title="Editar" onclick="event.stopPropagation();abrirEditar(this)"><i class="fa fa-pencil"></i></button>
                     <button class="ab ab-r" title="Eliminar" onclick="event.stopPropagation();eliminarDoc(this)"><i class="fa fa-trash-o"></i></button>

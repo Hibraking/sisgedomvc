@@ -15,10 +15,45 @@ class ArchivoService
     const PELIGROSAS = array('php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'phar', 'cgi', 'pl', 'py', 'asp', 'aspx', 'jsp', 'sh', 'exe', 'bat', 'htaccess');
     const MAX_BYTES = 15728640;   // 15 MB
 
-    /** Carpeta en disco: 'REGISTRO' (docs adjs reg_doc) | 'EMITIDO' (docs adjs docs_emitidos) */
+    /** Subcarpeta propia y su equivalente en sisgedov2, por tipo de archivo. */
+    const CARPETAS = array(
+        'REGISTRO' => array('reg_doc', 'docs adjs reg_doc'),
+        'EMITIDO'  => array('docs_emitidos', 'docs adjs docs_emitidos'),
+        'PERFIL'   => array('perfiles', 'images/perfiles'),
+    );
+
+    private static function tipo($origen)
+    {
+        return isset(self::CARPETAS[$origen]) ? self::CARPETAS[$origen] : self::CARPETAS['REGISTRO'];
+    }
+
+    /** Carpeta PROPIA donde se guardan los archivos nuevos: 'REGISTRO' | 'EMITIDO' | 'PERFIL'. */
     public static function carpeta($origen)
     {
-        return rtrim(config('ruta_sisgedov2'), '/\\') . '/' . ($origen === 'EMITIDO' ? 'docs adjs docs_emitidos' : 'docs adjs reg_doc');
+        $dir = rtrim(config('ruta_archivos'), '/\\') . '/' . self::tipo($origen)[0];
+        if (!is_dir($dir)) @mkdir($dir, 0755, true);
+        return $dir;
+    }
+
+    /** Carpeta de sisgedov2 (solo lectura) o null si no está configurada. */
+    public static function carpetaAntigua($origen)
+    {
+        $base = config('ruta_archivos_antigua');
+        return $base ? rtrim($base, '/\\') . '/' . self::tipo($origen)[1] : null;
+    }
+
+    /**
+     * Ruta para LEER un archivo: la carpeta propia y, si aún no se trasladó, la de
+     * sisgedov2. Si no existe en ninguna, devuelve la ruta propia (is_file() dará false).
+     */
+    public static function ruta($origen, $nombre)
+    {
+        $nombre = basename(str_replace('\\', '/', (string)$nombre));
+        $propia = self::carpeta($origen) . '/' . $nombre;
+        if ($nombre === '' || is_file($propia)) return $propia;
+        $antigua = self::carpetaAntigua($origen);
+        if ($antigua !== null && is_file($antigua . '/' . $nombre)) return $antigua . '/' . $nombre;
+        return $propia;
     }
 
     /** @return true|string  true o el motivo del rechazo */
@@ -92,7 +127,7 @@ class ArchivoService
     {
         $meta = self::obtener($origen, $nombreAlmacenado);
         if (!$meta) return null;
-        $ruta = self::carpeta($origen) . '/' . $nombreAlmacenado;
+        $ruta = self::ruta($origen, $nombreAlmacenado);
         return is_file($ruta) ? hash_equals($meta['hash_sha256'], hash_file('sha256', $ruta)) : false;
     }
 

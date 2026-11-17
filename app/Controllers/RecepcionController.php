@@ -306,12 +306,10 @@ class RecepcionController extends Controller
         if (preg_match('~^(reg|emi):(.+)$~s', (string)$r[10], $m)) {
             $r['adj'] = url('adjunto') . '?c=' . $m[1] . '&f=' . rawurlencode($m[2]);
         }
-        $antiguo = rtrim(config('url_sisgedov2'), '/');
-        // Seguimiento y cargo: se migran en las etapas 3, 4 y 6; mientras, se abren en sisgedov2
         $r['seguimiento'] = strtoupper(trim((string)$r[2])) === 'INTERNO'
-            ? $antiguo . '/reportes/consulta_interna.php?codigo_doc=' . rawurlencode((string)$r[4])
-            : $antiguo . '/consulta_publico.php?num_exp=' . rawurlencode((string)$r[4]);
-        $r['cargo'] = $antiguo . '/pdf/cargo_interno.php?exp=' . rawurlencode((string)$r[0]);
+            ? url('reportes/consulta-interna') . '?codigo_doc=' . rawurlencode((string)$r[4])
+            : url('consulta') . '?num_exp=' . rawurlencode((string)$r[4]);
+        $r['cargo'] = url('cargo-interno') . '?exp=' . rawurlencode((string)$r[0]);
         return $r;
     }
 
@@ -345,15 +343,8 @@ class RecepcionController extends Controller
             echo '</table>';
             exit;
         }
-        // PDF con la librería TCPDF de sisgedov2 (se trae al proyecto cuando se migren los cargos, etapa 4)
-        $tcpdf = rtrim(config('ruta_sisgedov2'), '/\\') . '/tcpdf/tcpdf.php';
-        if (!is_file($tcpdf)) {
-            http_response_code(500);
-            exit('No se encontró la librería TCPDF.');
-        }
-        error_reporting(E_ALL & ~E_DEPRECATED);
-        ini_set('display_errors', '0');
-        require_once $tcpdf;
+        \App\Services\PdfService::cargar();
+        \App\Services\PdfService::limpiarSalida();
         $pdf = new \TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetCreator('SISGEDO');
         $pdf->SetTitle('Recepción de documentos — ' . ucfirst($sufijo));

@@ -88,7 +88,6 @@ class EmisionController extends Controller
             'firmaMap' => EmisionModel::firmas(array_map(function ($r) { return $r[0]; }, $filas)),
             'firmaActiva' => $firmaActiva,
             'firmaJs' => FirmaService::config('js'),
-            'urlV2' => rtrim(config('url_sisgedov2'), '/'),
             'paginaUrl' => function ($n) use ($f) { return $this->direccion($f + array('page' => $n)); },
         ));
     }

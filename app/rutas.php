@@ -48,15 +48,56 @@ foreach (array('mpvirtual.php' => 'mesa-partes', 'consulta_publico.php' => 'cons
     $r->get($antigua, 'PublicoController@antigua', $pub + array('datos' => array('destino' => $nueva)));
 }
 
-// ---- Módulos del menú aún no migrados (etapas 4 a 6) ----
-$migradas = array('recepcion', 'derivados', 'mesa-partes-virtual');
-foreach (MenuService::definicion() as $grupo) {
-    foreach ($grupo['items'] as $it) {
-        if (in_array($it[1], $migradas, true)) continue;
-        $r->get($it[1], 'PendienteController@modulo', array('permiso' => $it[3], 'datos' => array('ruta' => $it[1])));
-    }
+// ---- Etapa 4: Registro (mesa de partes presencial), Emisión, firma y cargos PDF ----
+$permReg = array('permiso' => 'vistas/o_reg_documentos.php');
+$r->get('registro', 'RegistroController@index', $permReg);
+$r->post('registro/accion', 'RegistroController@accion', $permReg);
+$r->post('registro/reniec', 'RegistroController@reniec', $permReg);
+$permEmi = array('permiso' => 'vistas/v_docs_emitidos.php');
+$r->get('emision', 'EmisionController@index', $permEmi);
+$r->post('emision/accion', 'EmisionController@accion', $permEmi);
+// Firma Perú: el firmador llama sin sesión (token de un solo uso); iniciar/estado exigen sesión y CSRF en el controlador
+$r->get('firma', 'FirmaController@despachar', array('publica' => true));
+$r->post('firma', 'FirmaController@despachar', array('publica' => true, 'csrf' => false));
+// Cargos: con sesión por N°, o el ciudadano con su código de verificación
+$r->get('cargo', 'CargoController@externo', array('publica' => true));
+$r->get('cargo-interno', 'CargoController@interno', array('publica' => true));
+foreach (array('pdf/cargo.php' => 'cargo', 'tcpdf/examples/cargo_externo.php' => 'cargo', 'pdf/cargo_interno.php' => 'cargo-interno') as $antigua => $nueva) {
+    $r->get($antigua, 'PublicoController@antigua', $pub + array('datos' => array('destino' => $nueva)));
 }
-$r->get('supervision', 'PendienteController@modulo', array('admin' => true, 'datos' => array(
-    'ruta' => 'supervision', 'titulo' => 'Supervisión de oficinas', 'icono' => 'fa-th-list', 'etapa' => 5, 'antiguo' => 'vistas/v_supervision.php')));
-$r->get('perfil', 'PendienteController@modulo', array('datos' => array(
-    'ruta' => 'perfil', 'titulo' => 'Mi perfil', 'icono' => 'fa-user', 'etapa' => 6, 'antiguo' => 'vistas/v_profile.php')));
+
+// ---- Etapa 5: Archivo y Supervisión ----
+$permArch = array('permiso' => 'vistas/v_archivar_docs.php');
+$r->get('archivo', 'ArchivoController@index', $permArch);
+$r->post('archivo/accion', 'ArchivoController@accion', $permArch);
+$r->get('supervision', 'SupervisionController@index', array('admin' => true));
+
+// ---- Etapa 6: Reportes, Mantenimiento, Configuración y Mi perfil ----
+$permDe = function ($ruta) {
+    $it = MenuService::itemPorRuta($ruta);
+    return array('permiso' => $it[3]);
+};
+// Catálogos simples (config/catalogos.php)
+foreach (array('oficinas', 'documentos', 'tipos-tramite', 'acciones', 'estados', 'archivadores', 'menus') as $clave) {
+    $def = App\Models\CatalogoModel::definicion($clave);
+    $r->get($def['ruta'], 'CatalogoController@index', $permDe($def['ruta']) + array('datos' => array('clave' => $clave)));
+    $r->post($def['ruta'] . '/accion', 'CatalogoController@accion', $permDe($def['ruta']) + array('datos' => array('clave' => $clave)));
+}
+// Pantallas propias de mantenimiento
+foreach (array('mantenimiento/remitentes' => 'remitentes', 'mantenimiento/personal' => 'personal',
+               'mantenimiento/responsables' => 'responsables', 'configuracion/accesos' => 'accesos') as $ruta => $metodo) {
+    $r->get($ruta, 'MantenimientoController@' . $metodo, $permDe($ruta));
+    $r->post($ruta . '/accion', 'MantenimientoController@' . $metodo . 'Accion', $permDe($ruta));
+}
+// Reportes
+$r->get('reportes/consulta-interna', 'ReporteController@consultaInterna', $permDe('reportes/consulta-interna'));
+$r->get('reportes/estados', 'ReporteController@estados', $permDe('reportes/estados'));
+$r->get('reportes/cuaderno-externo', 'ReporteController@cuadernoExterno', $permDe('reportes/cuaderno-externo'));
+$r->get('reportes/cuaderno-externo/pdf', 'ReporteController@pdfExterno', $permDe('reportes/cuaderno-externo'));
+$r->get('reportes/cuaderno-interno', 'ReporteController@cuadernoInterno', $permDe('reportes/cuaderno-interno'));
+$r->get('reportes/cuaderno-interno/pdf', 'ReporteController@pdfInterno', $permDe('reportes/cuaderno-interno'));
+// Mi perfil (todo usuario con sesión)
+$r->get('perfil', 'PerfilController@index');
+$r->post('perfil/accion', 'PerfilController@accion');
+
+// Todas las opciones del menú están migradas (etapas 1 a 6).

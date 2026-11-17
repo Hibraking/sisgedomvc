@@ -8,7 +8,9 @@ var URL_CARGO = document.body.dataset.urlCargo || "";
 var filaActual = null;
 
 function esc(s) {
-  return $("<div>").text(s == null ? "" : String(s)).html();
+  return $("<div>")
+    .text(s == null ? "" : String(s))
+    .html();
 }
 
 /**
@@ -34,7 +36,8 @@ function irFiltros() {
     el.value ? p.set(id, el.value) : p.delete(id);
   });
   var ord = document.getElementById("orden");
-  if (ord) ord.value === "antiguos" ? p.set("orden", "antiguos") : p.delete("orden");
+  if (ord)
+    ord.value === "antiguos" ? p.set("orden", "antiguos") : p.delete("orden");
   var qs = p.toString();
   window.location = qs ? "?" + qs : window.location.pathname;
 }
@@ -75,20 +78,52 @@ function cargarHistorial(id, presentado) {
       (ev || []).forEach(function (e) {
         var t = TIPOS[e[0]] || [e[0], "#94a3b8"];
         var det = "";
-        if (e[0] === "OBSERVADO") det = "Motivo: " + esc(e[1]) + (e[3] ? "<br>Plazo: hasta el " + esc(e[3].split("-").reverse().join("/")) : "");
-        else if (e[0] === "SUBSANADO") det = (e[1] ? "Nota: " + esc(e[1]) + "<br>" : "") + (e[2] ? '<a target="_blank" href="' + URL_ADJ + encodeURIComponent(e[2]) + '"><i class="fa fa-paperclip"></i> Documento corregido</a>' : "");
+        if (e[0] === "OBSERVADO")
+          det =
+            "Motivo: " +
+            esc(e[1]) +
+            (e[3]
+              ? "<br>Plazo: hasta el " +
+                esc(e[3].split("-").reverse().join("/"))
+              : "");
+        else if (e[0] === "SUBSANADO")
+          det =
+            (e[1] ? "Nota: " + esc(e[1]) + "<br>" : "") +
+            (e[2]
+              ? '<a target="_blank" href="' +
+                URL_ADJ +
+                encodeURIComponent(e[2]) +
+                '"><i class="fa fa-paperclip"></i> Documento corregido</a>'
+              : "");
         else if (e[0] === "DERIVADO") det = "A: " + esc(e[1]);
         else if (e[1]) det = esc(e[1]);
-        if (e[0] === "OBSERVADO" && e[2]) det += '<br><a target="_blank" href="' + URL_ADJ + encodeURIComponent(e[2]) + '"><i class="fa fa-paperclip"></i> Documento observado</a>';
+        if (e[0] === "OBSERVADO" && e[2])
+          det +=
+            '<br><a target="_blank" href="' +
+            URL_ADJ +
+            encodeURIComponent(e[2]) +
+            '"><i class="fa fa-paperclip"></i> Documento observado</a>';
         html +=
-          '<div class="ev" style="--c:' + t[1] + '"><div class="tt">' + esc(t[0]) + '</div><div class="ff">' +
-          esc(fechaCorta(e[4])) + (e[5] ? " · " + esc(e[5]) : e[0] === "SUBSANADO" ? " · el ciudadano" : "") +
-          "</div>" + (det ? '<div class="dd">' + det + "</div>" : "") + "</div>";
+          '<div class="ev" style="--c:' +
+          t[1] +
+          '"><div class="tt">' +
+          esc(t[0]) +
+          '</div><div class="ff">' +
+          esc(fechaCorta(e[4])) +
+          (e[5]
+            ? " · " + esc(e[5])
+            : e[0] === "SUBSANADO"
+              ? " · el ciudadano"
+              : "") +
+          "</div>" +
+          (det ? '<div class="dd">' + det + "</div>" : "") +
+          "</div>";
       });
       box.innerHTML = html;
     })
     .fail(function () {
-      box.innerHTML = '<span class="muted">No se pudo cargar el historial.</span>';
+      box.innerHTML =
+        '<span class="muted">No se pudo cargar el historial.</span>';
     });
 }
 
@@ -106,7 +141,12 @@ $("#tbody").on("click", ".row", function () {
   S("d-oficial", d.oficial);
   var w = document.getElementById("d-oficial-w");
   if (w) w.style.display = d.oficial ? "" : "none";
-  S("d-recep", d.recep ? d.recep + (d.recepquien ? " — " + d.recepquien : "") : "Pendiente");
+  S(
+    "d-recep",
+    d.recep
+      ? d.recep + (d.recepquien ? " — " + d.recepquien : "")
+      : "Pendiente",
+  );
   S("d-destino", d.destino || "Sin derivar");
   S("d-folios", d.folios);
   S("d-remit", d.remit);
@@ -143,9 +183,16 @@ document.querySelectorAll(".modal").forEach(function (m) {
 });
 function resumen(d) {
   return (
-    "<strong>Exp. " + esc(d.exp) + "</strong> — " + esc(d.doc) +
-    "<br>" + esc(d.remit) + (d.dni ? " (DNI/RUC " + esc(d.dni) + ")" : "") +
-    "<br><em>" + esc(d.asunto) + "</em>"
+    "<strong>Exp. " +
+    esc(d.exp) +
+    "</strong> — " +
+    esc(d.doc) +
+    "<br>" +
+    esc(d.remit) +
+    (d.dni ? " (DNI/RUC " + esc(d.dni) + ")" : "") +
+    "<br><em>" +
+    esc(d.asunto) +
+    "</em>"
   );
 }
 function respuestaError(resp) {
@@ -159,11 +206,13 @@ function respuestaError(resp) {
 function avisoCorreo(d, el, texto) {
   if (d.email) {
     el.className = "mpv-nota ok";
-    el.innerHTML = '<i class="fa fa-envelope"></i> ' + texto + " <strong></strong>.";
+    el.innerHTML =
+      '<i class="fa fa-envelope"></i> ' + texto + " <strong></strong>.";
     el.querySelector("strong").textContent = d.email;
   } else {
     el.className = "mpv-nota warn";
-    el.innerHTML = '<i class="fa fa-exclamation-triangle"></i> El ciudadano no registró correo: no se le podrá avisar.';
+    el.innerHTML =
+      '<i class="fa fa-exclamation-triangle"></i> El ciudadano no registró correo: no se le podrá avisar.';
   }
 }
 /** POST de una acción con botón "ocupado" y recarga al terminar. */
@@ -176,7 +225,9 @@ function accion(btn, datos, alTerminar) {
     .done(function (resp) {
       if (respuestaError(resp)) return;
       if (String(resp || "").indexOf("FALLO") !== -1) {
-        alert("La acción se realizó, pero NO se pudo enviar el correo al ciudadano. Puede avisarle por teléfono.");
+        alert(
+          "La acción se realizó, pero NO se pudo enviar el correo al ciudadano. Puede avisarle por teléfono.",
+        );
       }
       if (alTerminar) alTerminar(resp);
       location.reload();
@@ -196,7 +247,11 @@ function abrirRecepcionar(row) {
   if (!row) return;
   filaActual = row;
   document.getElementById("rc_info").innerHTML = resumen(row.dataset);
-  avisoCorreo(row.dataset, document.getElementById("rc_correo"), "Se avisará al ciudadano por correo a");
+  avisoCorreo(
+    row.dataset,
+    document.getElementById("rc_correo"),
+    "Se avisará al ciudadano por correo a",
+  );
   document.getElementById("modalRecep").classList.add("show");
 }
 $("#rc_ok").on("click", function () {
@@ -212,11 +267,18 @@ function abrirObservar(row) {
   document.getElementById("ob_motivo").value = "";
   var n = document.getElementById("ob_plazo");
   n.innerHTML =
-    '<i class="fa fa-clock-o"></i> El ciudadano tendrá ' + esc(pageConfig.plazoDias) +
-    " días hábiles para subsanar: <strong>hasta el " + esc(pageConfig.plazoObs) + "</strong>. " +
+    '<i class="fa fa-clock-o"></i> El ciudadano tendrá ' +
+    esc(pageConfig.plazoDias) +
+    " días hábiles para subsanar: <strong>hasta el " +
+    esc(pageConfig.plazoObs) +
+    "</strong>. " +
     (row.dataset.email
-      ? "Recibirá un correo en <strong>" + esc(row.dataset.email) + "</strong> con el motivo y un enlace para enviar el documento corregido."
-      : "<br><strong>Atención:</strong> no registró correo; tendrá que avisarle por teléfono" + (row.dataset.tel ? " (" + esc(row.dataset.tel) + ")" : "") + ".");
+      ? "Recibirá un correo en <strong>" +
+        esc(row.dataset.email) +
+        "</strong> con el motivo y un enlace para enviar el documento corregido."
+      : "<br><strong>Atención:</strong> no registró correo; tendrá que avisarle por teléfono" +
+        (row.dataset.tel ? " (" + esc(row.dataset.tel) + ")" : "") +
+        ".");
   document.getElementById("modalObs").classList.add("show");
   setTimeout(function () {
     document.getElementById("ob_motivo").focus();
@@ -242,12 +304,15 @@ function abrirNoPresentado(row) {
   row = filaDe(row);
   if (!row) return;
   filaActual = row;
-  document.getElementById("np_info").innerHTML = resumen(row.dataset) + (row.dataset.motivo ? "<br>Observación: " + esc(row.dataset.motivo) : "");
+  document.getElementById("np_info").innerHTML =
+    resumen(row.dataset) +
+    (row.dataset.motivo ? "<br>Observación: " + esc(row.dataset.motivo) : "");
   document.getElementById("np_plazo").textContent = row.dataset.plazo;
   document.getElementById("modalNoPres").classList.add("show");
 }
 $("#np_ok").on("click", function () {
-  if (filaActual) accion(this, { no_presentado: "-", id: filaActual.dataset.id });
+  if (filaActual)
+    accion(this, { no_presentado: "-", id: filaActual.dataset.id });
 });
 
 /* ---------- Derivar ---------- */
@@ -268,9 +333,16 @@ $("#dv_ok").on("click", function () {
   }
   var exp = filaActual.dataset.exp;
   // La pestaña del cargo se abre ANTES de la petición (si no, el navegador la bloquea)
-  var ventana = document.getElementById("dv_cargo").checked ? window.open("", "_blank") : null;
+  var ventana = document.getElementById("dv_cargo").checked
+    ? window.open("", "_blank")
+    : null;
   var $b = $(this).prop("disabled", true);
-  $.post(URL_MPV, { derivar: "-", id: filaActual.dataset.id, idoficina: ofi, _csrf: CSRF })
+  $.post(URL_MPV, {
+    derivar: "-",
+    id: filaActual.dataset.id,
+    idoficina: ofi,
+    _csrf: CSRF,
+  })
     .done(function (resp) {
       if (respuestaError(resp)) {
         if (ventana) ventana.close();

@@ -4,14 +4,14 @@ namespace App\Controllers;
 use App\Core\Controller;
 
 /**
- * Muestra un documento adjunto guardado por sisgedov2 (mismas carpetas):
- *   adjunto?c=reg&f=<archivo>  → "docs adjs reg_doc"        (registros / mesa de partes)
- *   adjunto?c=emi&f=<archivo>  → "docs adjs docs_emitidos"  (documentos emitidos)
+ * Muestra un documento adjunto (carpeta propia; los antiguos aún no trasladados, de la de sisgedov2):
+ *   adjunto?c=reg&f=<archivo>  → registros / mesa de partes
+ *   adjunto?c=emi&f=<archivo>  → documentos emitidos
  * Requiere sesión. Solo se acepta el nombre del archivo (sin rutas).
  */
 class AdjuntoController extends Controller
 {
-    private static $carpetas = array('reg' => 'docs adjs reg_doc', 'emi' => 'docs adjs docs_emitidos');
+    private static $carpetas = array('reg' => 'REGISTRO', 'emi' => 'EMITIDO');
 
     public function ver()
     {
@@ -20,7 +20,7 @@ class AdjuntoController extends Controller
         if (!isset(self::$carpetas[$c]) || $f === '' || $f[0] === '.') {
             $this->noEncontrado();
         }
-        $ruta = rtrim(config('ruta_sisgedov2'), '/\\') . '/' . self::$carpetas[$c] . '/' . $f;
+        $ruta = \App\Services\ArchivoService::ruta(self::$carpetas[$c], $f);
         if (!is_file($ruta)) {
             $this->noEncontrado();
         }

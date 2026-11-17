@@ -2,7 +2,10 @@
 
 /* Tabla de 8 columnas: Expediente | Documento | Remitente | Asunto | Destino | Estado | Fecha | Acciones */
 .rowg {
-  grid-template-columns: 92px minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr) 116px 104px 108px;
+  grid-template-columns: 92px minmax(0, 1.35fr) minmax(0, 1fr) minmax(
+      0,
+      1.5fr
+    ) minmax(0, 1fr) 116px 104px 108px;
 }
 
 /* Botón de acción rojo (eliminar) */
@@ -46,9 +49,16 @@
   box-shadow: inset 3px 0 0 #dc2626;
 }
 @keyframes bnew-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45); }
-  50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .b-new { animation: none; }
+  .b-new {
+    animation: none;
+  }
 }

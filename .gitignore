@@ -2,3 +2,8 @@
 /config/correo_clave.php
 /storage/logs/*
 !/storage/logs/.gitkeep
+# Documentos y fotos (datos de los ciudadanos): nunca al repositorio
+/storage/archivos/*
+!/storage/archivos/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep

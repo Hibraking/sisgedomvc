@@ -372,7 +372,7 @@ class MesaPartesService
         $adjuntos = array();
         $nota = 'El ciudadano no adjuntó archivo.';
         if (!empty($x['adjunto'])) {
-            $ruta = ArchivoService::carpeta('REGISTRO') . '/' . $x['adjunto'];
+            $ruta = ArchivoService::ruta('REGISTRO', $x['adjunto']);
             $max = (int)CorreoService::config('aviso_adjunto_max_mb') * 1048576;
             if (is_file($ruta) && filesize($ruta) <= $max) {
                 $nombre = trim((string)$x['nombre_original']) !== '' ? $x['nombre_original'] : $x['adjunto'];

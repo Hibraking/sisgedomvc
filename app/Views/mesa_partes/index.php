@@ -157,7 +157,7 @@
                   <?php } elseif ($bandeja === 'por_derivar') { ?>
                     <button class="btn btn-p btn-sm" onclick="event.stopPropagation();abrirDerivar(this)"><i class="fa fa-share"></i> Derivar</button>
                   <?php } elseif ($f['estado'] !== 'NO_PRESENTADO') { ?>
-                    <a class="ab ab-b" title="Imprimir cargo" target="_blank" href="<?= h($urlV2) ?>/pdf/cargo.php?exp=<?= h(rawurlencode((string)$r[1])) ?>" onclick="event.stopPropagation()"><i class="fa fa-print"></i></a>
+                    <a class="ab ab-b" title="Imprimir cargo" target="_blank" href="<?= h(url('cargo')) ?>?exp=<?= h(rawurlencode((string)$r[1])) ?>" onclick="event.stopPropagation()"><i class="fa fa-print"></i></a>
                   <?php } ?>
                 </div>
               </div>

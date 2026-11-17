@@ -62,7 +62,7 @@ class FirmaController extends Controller
         if (empty($doc['adjunto']) || strtolower(pathinfo($doc['adjunto'], PATHINFO_EXTENSION)) !== 'pdf') {
             $this->json(array('ok' => false, 'mensaje' => 'Para firmar digitalmente, el adjunto del documento debe ser un PDF.'));
         }
-        if (!is_file(ArchivoService::carpeta('EMITIDO') . '/' . $doc['adjunto'])) {
+        if (!is_file(ArchivoService::ruta('EMITIDO', $doc['adjunto']))) {
             $this->json(array('ok' => false, 'mensaje' => 'No se encontró el archivo adjunto en el servidor.'));
         }
         if ((int)$doc['estado'] === 1) {
@@ -113,7 +113,7 @@ class FirmaController extends Controller
     {
         $sol = FirmaService::solicitud($this->get('t'));
         if (!$sol) $this->error('Solicitud de firma inválida o vencida.', 403);
-        $ruta = ArchivoService::carpeta('EMITIDO') . '/' . basename($sol['adjunto']);
+        $ruta = ArchivoService::ruta('EMITIDO', $sol['adjunto']);
         if (!is_file($ruta)) $this->error('Archivo no encontrado.', 404);
         header('Content-Type: application/pdf');
         header('Content-Length: ' . filesize($ruta));

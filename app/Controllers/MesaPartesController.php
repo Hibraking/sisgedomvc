@@ -79,7 +79,7 @@ class MesaPartesController extends Controller
                 'endpoint' => url('mesa-partes-virtual/accion'),
                 'urlBandeja' => url('mesa-partes-virtual'),
                 'urlAdjunto' => $urlAdj,
-                'urlCargo' => rtrim(config('url_sisgedov2'), '/') . '/pdf/cargo.php?exp=',   // cargos PDF: etapa 4
+                'urlCargo' => url('cargo') . '?exp=',
             ),
             'bandejas' => self::BANDEJAS,
             'bandeja' => $bandeja,
@@ -92,7 +92,6 @@ class MesaPartesController extends Controller
             'first' => $first,
             'firstF' => $first ? $fila($first) : null,
             'fila' => $fila, 'mpvUrl' => $mpvUrl, 'hace' => $hace,
-            'urlV2' => rtrim(config('url_sisgedov2'), '/'),
         ));
     }
 

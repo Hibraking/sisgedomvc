@@ -12,7 +12,9 @@ return array(
     'js'           => 'https://apps.firmaperu.gob.pe/web/clienteweb/firmaperu.min.js',
     'filtro_cert'  => '.*',
     'nivel'        => 'B',                                       // B básica · T con sello de tiempo · LTA
-    'tsa_url'      => '', 'tsa_user' => '', 'tsa_pass' => '',
+    'tsa_url'      => '',
+    'tsa_user' => '',
+    'tsa_pass' => '',
     'imagen'       => 'assets/images/pdf/' . SISGEDO_PDF_LOGO,   // estampado (dentro de public/)
     'minutos'      => 15,                                        // validez del enlace de firma
 );

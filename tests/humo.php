@@ -47,6 +47,30 @@ $casos = array(
     array('Dirección antigua verificar.php', 'verificar.php?c=X', null, 301),
     array('MPV interna sin sesión lleva al login', 'mesa-partes-virtual', null, 302),
     array('Acción MPV sin sesión', 'mesa-partes-virtual/accion', array('historial' => '-'), 401),
+    // Etapa 4
+    array('Registro sin sesión lleva al login', 'registro', null, 302),
+    array('Emisión sin sesión lleva al login', 'emision', null, 302),
+    array('Acción de registro sin sesión', 'registro/accion', array('Insertar' => '-'), 401),
+    array('Acción de emisión sin sesión', 'emision/accion', array('Insertar' => '-'), 401),
+    array('Cargo sin sesión ni código', 'cargo?exp=1', null, 403),
+    array('Cargo con código inválido', 'cargo?c=ZZZZ-ZZZZ', null, 403),
+    array('Cargo interno sin sesión', 'cargo-interno?exp=1', null, 403),
+    array('Firma: token falso del firmador', 'firma', array('accion' => 'param', 'param_token' => str_repeat('a', 64)), 403),
+    array('Dirección antigua pdf/cargo.php', 'pdf/cargo.php?exp=1', null, 301),
+    // Etapa 5
+    array('Archivo sin sesión lleva al login', 'archivo', null, 302),
+    array('Acción de archivo sin sesión', 'archivo/accion', array('insertar' => '-'), 401),
+    array('Supervisión sin sesión lleva al login', 'supervision', null, 302),
+    array('CSS de supervisión', 'assets/css/supervision.css', null, 200),
+    // Etapa 6
+    array('Catálogo sin sesión lleva al login', 'mantenimiento/oficinas', null, 302),
+    array('Acción de catálogo sin sesión', 'mantenimiento/acciones/accion', array('Codigo' => ''), 401),
+    array('Remitentes sin sesión lleva al login', 'mantenimiento/remitentes', null, 302),
+    array('Accesos sin sesión lleva al login', 'configuracion/accesos', null, 302),
+    array('Reporte sin sesión lleva al login', 'reportes/consulta-interna', null, 302),
+    array('PDF de cuaderno sin sesión lleva al login', 'reportes/cuaderno-externo/pdf', null, 302),
+    array('Mi perfil sin sesión lleva al login', 'perfil', null, 302),
+    array('Acción de perfil sin sesión', 'perfil/accion', array('actualizar_perfil' => '-'), 401),
 );
 $fallas = 0;
 foreach ($casos as $c) {

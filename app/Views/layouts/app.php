@@ -1,7 +1,7 @@
 <?php
 /* Plantilla general de las pantallas internas: cabecera + menú lateral + contenido.
    Variables: $titulo, $contenido (HTML de la vista), $cssExtra (CSS opcionales),
-   $jsExtra (JS opcionales, al final), $bodyData (atributos data-* del body: ['endpoint' => ...]) */
+   $jsExtra (JS opcionales, al final), $claseBody (clase del body), $bodyData (atributos data-* del body: ['endpoint' => ...]) */
 use App\Core\Auth;
 use App\Core\Csrf;
 use App\Core\Session;
@@ -25,7 +25,7 @@ $aviso = Session::flash('aviso');
   <script src="<?= asset('assets/vendor/jquery/jquery-2.1.4.min.js') ?>"></script>
 </head>
 
-<body data-csrf="<?= h(Csrf::token()) ?>" data-base="<?= h(url('')) ?>"<?php
+<body<?= !empty($claseBody) ? ' class="' . h($claseBody) . '"' : '' ?> data-csrf="<?= h(Csrf::token()) ?>" data-base="<?= h(url('')) ?>"<?php
   foreach (isset($bodyData) ? $bodyData : array() as $k => $v) {
     echo ' data-' . h(strtolower(preg_replace('~([a-z])([A-Z])~', '$1-$2', $k))) . '="' . h($v) . '"';
   } ?>>
