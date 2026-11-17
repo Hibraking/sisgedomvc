@@ -74,6 +74,23 @@ class NumeracionService
         return $s !== '' ? mb_substr($s, 0, 14) : 'OF' . (int)$idoficina;
     }
 
+    /** Número de expediente (mesa de partes presencial y virtual): AÑO + correlativo de 4+ dígitos. */
+    public static function nuevoExpediente()
+    {
+        $anio = (int)date('Y');
+        $maxUsado = function () use ($anio) {
+            // comparación NUMÉRICA (MAX sobre texto fallaba al pasar de 9999)
+            return (int)Database::valor("SELECT MAX(CAST(SUBSTRING(nro_exp, 5) AS UNSIGNED)) FROM registro_documentos
+                                          WHERE nro_exp LIKE ? AND fecha_registro >= ?", array($anio . '%', $anio . '-01-01'));
+        };
+        if (!self::migracionOk()) {
+            return $anio . str_pad((string)($maxUsado() + 1), 4, '0', STR_PAD_LEFT);
+        }
+        $clave = 'EXP-' . $anio;
+        $semilla = self::actual($clave) === null ? $maxUsado() : 0;
+        return $anio . str_pad((string)self::siguiente($clave, $semilla), 4, '0', STR_PAD_LEFT);
+    }
+
     /**
      * Número de registro interno de la oficina al recepcionar: SIGLAS-AÑO-NNNN
      * (o el formato antiguo AÑONNNN mientras no se aplique la migración 013).

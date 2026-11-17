@@ -33,6 +33,15 @@ class RecepcionFormato
         return mb_strtolower(trim((string)$texto), 'UTF-8');
     }
 
+    /** "1.25 MB", "340.0 KB", "512 bytes" */
+    public static function tamano($bytes)
+    {
+        $b = (float)$bytes;
+        if ($b >= 1048576) return number_format($b / 1048576, 2) . ' MB';
+        if ($b >= 1024) return number_format($b / 1024, 1) . ' KB';
+        return number_format($b) . ' bytes';
+    }
+
     public static function hace($fecha)
     {
         $t = strtotime((string)$fecha);

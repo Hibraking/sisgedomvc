@@ -19,15 +19,18 @@ class View
     }
 
     /** Devuelve el HTML de una plantilla (para incluir piezas dentro de otras). */
-    public static function parcial($vista, array $datos = array())
+    public static function parcial($__vista, array $__datos = array())
     {
-        $archivo = SISGEDO_RAIZ . '/app/Views/' . $vista . '.php';
-        if (!is_file($archivo)) {
-            throw new \RuntimeException('Vista no encontrada: ' . $vista);
+        // Nombres internos con "__": así una vista puede recibir variables llamadas
+        // $datos, $archivo o $vista sin que extract() las ignore.
+        $__ruta = SISGEDO_RAIZ . '/app/Views/' . $__vista . '.php';
+        if (!is_file($__ruta)) {
+            throw new \RuntimeException('Vista no encontrada: ' . $__vista);
         }
-        extract($datos, EXTR_SKIP);
+        unset($__datos['__vista'], $__datos['__datos'], $__datos['__ruta'], $__datos['this']);
+        extract($__datos);
         ob_start();
-        require $archivo;
+        require $__ruta;
         return ob_get_clean();
     }
 }

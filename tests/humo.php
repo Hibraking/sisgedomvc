@@ -37,6 +37,16 @@ $casos = array(
     array('Acción de recepción sin sesión', 'recepcion/accion', array('carga_aciones' => '-'), 401),
     array('JS de recepción', 'assets/js/recepcion.js', null, 200),
     array('JS de notificaciones', 'assets/js/notificaciones.js', null, 200),
+    // Etapa 3
+    array('Mesa de Partes Virtual (pública)', 'mesa-partes', null, 200),
+    array('Consulta de expediente (pública)', 'consulta?num_exp=99999999', null, 200),
+    array('Verificación (pública)', 'verificar?c=ZZZZ-ZZZZ', null, 200),
+    array('Subsanar con enlace inválido', 'subsanar?t=abc', null, 200),
+    array('Envío MPV sin datos se rechaza', 'mesa-partes/enviar', array('asunto' => ''), 200),
+    array('Dirección antigua mpvirtual.php', 'mpvirtual.php', null, 301),
+    array('Dirección antigua verificar.php', 'verificar.php?c=X', null, 301),
+    array('MPV interna sin sesión lleva al login', 'mesa-partes-virtual', null, 302),
+    array('Acción MPV sin sesión', 'mesa-partes-virtual/accion', array('historial' => '-'), 401),
 );
 $fallas = 0;
 foreach ($casos as $c) {

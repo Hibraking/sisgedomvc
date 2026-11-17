@@ -45,7 +45,7 @@ Las carpetas `app/`, `config/`, `storage/` y `tests/` están bloqueadas desde la
 |---|---|---|
 | 1 | Estructura MVC, conexión, inicio de sesión, menú lateral, selector de oficina del administrador, Inicio | ✅ |
 | 2 | Recepción y Derivados (recepcionar, derivar, devolver, archivar desde la bandeja, adjuntos, exportaciones, notificaciones en vivo) | ✅ |
-| 3 | Mesa de Partes Virtual (bandejas, observar, subsanar, correos) y páginas públicas | Pendiente |
+| 3 | Mesa de Partes Virtual (bandejas, observar, subsanar, correos) y páginas públicas | ✅ |
 | 4 | Registro (mesa de partes presencial) y Emisión (numeración, firma) + cargos PDF | Pendiente |
 | 5 | Archivo y Supervisión | Pendiente |
 | 6 | Reportes, Mantenimiento, Configuración y Mi perfil | Pendiente |
@@ -58,6 +58,18 @@ Las carpetas `app/`, `config/`, `storage/` y `tests/` están bloqueadas desde la
   de la sesión; los archivadores salen de la sesión; un intento rechazado ya no consume número de registro.
 - Aún se abren en sisgedov2: imprimir cargo (etapa 4), seguimiento/consultas (etapas 3 y 6) y
   "responder con documento" (etapa 4).
+
+### Notas de la etapa 3
+- Operador: `mesa-partes-virtual` (bandejas `?b=`), `mesa-partes-virtual/accion` (POST, mismas claves de sisgedov2).
+- Públicas (sin sesión): `mesa-partes`, `consulta`, `subsanar`, `verificar`. Las direcciones antiguas
+  (`mpvirtual.php`, `consulta_publico.php`, `subsanar.php`, `verificar.php`, `pdf/verificar.php`)
+  redirigen (301): los enlaces de correos y los QR ya impresos siguen funcionando.
+- Correo: `app/Services/CorreoService.php` (PHPMailer en `app/Libs/PHPMailer`), configuración en
+  `config/correo.php`; la contraseña va en `config/correo_clave.php` (no se sube a Git). En local
+  los correos van a Mailpit (http://localhost:8025).
+- Calendario de días hábiles y horario: `CalendarioService`. Archivos, huella SHA-256 y código de
+  verificación: `ArchivoService` (los adjuntos se siguen guardando en las carpetas de sisgedov2).
+- Aún se abren en sisgedov2: cargos PDF (`pdf/cargo.php`, etapa 4).
 
 Mientras un módulo no está migrado, su opción del menú muestra en qué etapa se
 construye y un enlace a la misma pantalla en sisgedov2.

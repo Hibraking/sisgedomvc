@@ -34,6 +34,15 @@ class Url
         return self::base() . '/' . str_replace('%2F', '/', rawurlencode($ruta)) . $v;
     }
 
+    /** Dirección completa (con dominio) para correos, códigos QR y enlaces externos. */
+    public static function absoluta($ruta = '')
+    {
+        $https = (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https');
+        $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+        return ($https ? 'https' : 'http') . '://' . $host . self::a($ruta);
+    }
+
     /** Ruta pedida, relativa a la base y sin parámetros: "recepcion", "" (inicio)... */
     public static function rutaActual()
     {

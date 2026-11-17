@@ -1,0 +1,292 @@
+/* ============================================================
+   SISGEDO — Páginas públicas (Mesa de Partes Virtual y Consulta)
+   Mismo lenguaje visual del sistema interno, pensado para
+   ciudadanos y pantallas de celular.
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  background: linear-gradient(180deg, #f8fbff 0, #eef2f7 220px, #eef2f7 100%);
+  color: #1e293b;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---- Cabecera municipal ---- */
+.pub-hdr {
+  background: linear-gradient(90deg, #123a7a 0%, #1e56b0 100%);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.25);
+}
+.pub-hdr img { height: 52px; width: auto; }
+.pub-hdr .th { flex: 1; }
+.pub-hdr .t1 { font-size: 15px; font-weight: 700; letter-spacing: 0.4px; }
+.pub-hdr .t2 { font-size: 11.5px; opacity: 0.85; }
+.pub-hdr a.enl {
+  color: #fff; text-decoration: none; font-size: 12.5px; font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.45); border-radius: 999px; padding: 7px 14px;
+  white-space: nowrap;
+}
+.pub-hdr a.enl:hover { background: rgba(255,255,255,0.12); }
+
+/* ---- Contenido ---- */
+.pub-main { flex: 1; width: 100%; max-width: 780px; margin: 0 auto; padding: 26px 16px 30px; }
+.pub-hero { text-align: center; margin-bottom: 18px; }
+.pub-hero h1 { font-size: 24px; font-weight: 700; color: #123a7a; letter-spacing: -0.3px; }
+.pub-hero p { font-size: 13px; color: #64748b; margin-top: 6px; }
+
+.pub-card {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+  padding: 22px 24px; margin-bottom: 14px;
+}
+
+/* ---- Pasos (stepper) ---- */
+.pasos { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 20px; }
+.paso { display: flex; align-items: center; gap: 8px; }
+.paso .pnum {
+  width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; background: #eef1f5; color: #94a3b8; border: 2px solid #e2e8f0;
+}
+.paso .ptxt { font-size: 12.5px; color: #94a3b8; font-weight: 600; }
+.paso.activo .pnum { background: #2563eb; color: #fff; border-color: #2563eb; }
+.paso.activo .ptxt { color: #1e293b; }
+.paso.hecho .pnum { background: #16a34a; color: #fff; border-color: #16a34a; }
+.paso.hecho .ptxt { color: #16a34a; }
+.paso-linea { width: 56px; height: 2px; background: #e2e8f0; margin: 0 12px; }
+@media (max-width: 560px) { .paso .ptxt { display: none; } .paso-linea { width: 28px; } }
+/* Cabecera municipal en celulares: se compacta sin desbordar */
+@media (max-width: 560px) {
+  .pub-hdr { padding: 10px 12px; gap: 10px; flex-wrap: wrap; }
+  .pub-hdr img { height: 40px; }
+  .pub-hdr .t1 { font-size: 13px; }
+  .pub-hdr .t2 { font-size: 10.5px; }
+  .pub-hdr a.enl { font-size: 11.5px; padding: 6px 11px; }
+}
+
+/* ---- Formulario ---- */
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.fgrid .full { grid-column: 1 / -1; }
+@media (max-width: 560px) { .fgrid { grid-template-columns: 1fr; } }
+label { font-size: 12.5px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px; }
+.req { color: #ef4444; }
+input, select, textarea {
+  width: 100%; border: 1px solid #e2e8f0; border-radius: 9px; padding: 10px 12px;
+  font-size: 13.5px; color: #334155; outline: none; background: #fff; font-family: inherit;
+}
+input:focus, select:focus, textarea:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08); }
+select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, #94a3b8 50%), linear-gradient(135deg, #94a3b8 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+.hint { font-size: 11.5px; color: #94a3b8; margin-top: 4px; }
+.error-msg { display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; margin-bottom: 14px; }
+.error-msg.visible { display: block; }
+
+/* ---- Botones ---- */
+.acciones { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e2e8f0; background: #fff;
+  color: #475569; border-radius: 10px; padding: 10px 18px; font-size: 13.5px; font-weight: 600;
+  cursor: pointer; text-decoration: none; font-family: inherit;
+}
+.btn:hover { border-color: #cbd5e1; background: #f8fafc; }
+.btn-p { background: #2563eb; border-color: #2563eb; color: #fff; }
+.btn-p:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.btn:disabled { opacity: 0.55; cursor: default; }
+
+/* ---- Éxito ---- */
+.exito { text-align: center; padding: 10px 0 4px; }
+.exito .ic { width: 68px; height: 68px; border-radius: 50%; background: #ecfdf3; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 14px; }
+.exito h2 { font-size: 18px; color: #1e293b; }
+.exito .expnum {
+  font-size: 30px; font-weight: 700; letter-spacing: 1px; color: #123a7a;
+  background: #eef2ff; border: 1px dashed #93c5fd; border-radius: 12px;
+  padding: 12px 22px; display: inline-block; margin: 14px 0; font-variant-numeric: tabular-nums;
+}
+.exito p { font-size: 13px; color: #64748b; }
+
+/* ---- Consulta: cabecera del expediente ---- */
+.exp-head { display: flex; align-items: flex-start; gap: 14px; }
+.exp-head .di { width: 46px; height: 46px; border-radius: 12px; background: #eef2ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.exp-head .dt { font-size: 15px; font-weight: 700; color: #1e293b; }
+.exp-head .ds { font-size: 12px; color: #64748b; margin-top: 2px; }
+.badge { display: inline-block; border-radius: 999px; padding: 3px 11px; font-size: 11.5px; font-weight: 700; }
+.badge.azul { background: #eef2ff; color: #1d4ed8; }
+.badge.verde { background: #ecfdf3; color: #16a34a; }
+.badge.ambar { background: #fffbeb; color: #b45309; }
+.exp-datos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 16px; }
+@media (max-width: 560px) { .exp-datos { grid-template-columns: 1fr; } }
+.exp-datos div { display: grid; grid-template-columns: 130px 1fr; font-size: 12.5px; padding: 7px 0; border-bottom: 1px solid #f1f5f9; }
+.exp-datos dt { color: #94a3b8; }
+.exp-datos dd { color: #1e293b; font-weight: 500; overflow-wrap: break-word; }
+
+/* ---- Línea de tiempo pública ---- */
+.linea { position: relative; padding-left: 22px; margin-top: 14px; }
+.linea::before { content: ""; position: absolute; left: 8px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, #dbe3ef, #bfdbfe); border-radius: 99px; }
+.evt { position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.evt::before {
+  content: ""; position: absolute; left: -20px; top: 15px; width: 11px; height: 11px; border-radius: 50%;
+  background: #16a34a; border: 2px solid #fff; box-shadow: 0 0 0 2px #16a34a33;
+}
+.evt.actual::before { background: #fff; border: 3px solid #2563eb; box-shadow: 0 0 0 2px #2563eb22; }
+.evt .ehead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.evt .eofi { font-size: 13px; font-weight: 700; color: #1e293b; }
+.evt .efecha { font-size: 11.5px; color: #94a3b8; white-space: nowrap; }
+.evt .edet { display: flex; gap: 18px; margin-top: 6px; font-size: 12px; color: #475569; flex-wrap: wrap; }
+.evt .edet i { color: #94a3b8; margin-right: 5px; }
+
+/* ---- Avisos ---- */
+.aviso { text-align: center; padding: 30px 16px; color: #94a3b8; font-size: 13px; }
+.aviso i { font-size: 26px; color: #f59e0b; display: block; margin-bottom: 10px; }
+
+/* ---- Pie ---- */
+.pub-footer { text-align: center; font-size: 12px; color: #64748b; padding: 16px; }
+.pub-footer b { color: #1e56b0; }
+
+/* Cambio de sistema: enlace y ventana de aviso hacia el SISGEDO anterior */
+.aviso-anterior { margin-top: 16px; padding: 14px; border-radius: 10px; background: #eff6ff; color: #1e3a8a; font-size: 13px; line-height: 1.6; }
+.aviso-anterior i.fa-history { font-size: 18px; color: #2563eb; display: inline; margin: 0 6px 0 0; }
+.aviso-anterior .btn { margin-top: 10px; text-decoration: none; }
+.modal-anterior { position: fixed; inset: 0; z-index: 1000; background: rgba(15, 23, 42, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal-anterior[hidden] { display: none; }
+.modal-anterior .caja { background: #fff; border-radius: 14px; max-width: 460px; width: 100%; padding: 26px 24px 22px; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, .25); }
+.modal-anterior .ico { width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.modal-anterior h2 { margin: 0 0 10px; font-size: 18px; color: #123a7a; }
+.modal-anterior p { margin: 0 0 10px; font-size: 14px; color: #475569; line-height: 1.55; }
+.modal-anterior .acc { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.modal-anterior .acc .btn { justify-content: center; text-decoration: none; }
+
+/* ============================================================
+   Mesa de Partes Virtual (body.mpv)
+   Mismo estilo que la Consulta (cabecera, títulos, tarjetas, campos).
+   Solo en pantallas MUY bajas se reducen un poco los espacios.
+   ============================================================ */
+/* Aviso fuera de horario: tarjeta con ícono, como las de la Consulta */
+.mpv-horario {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: #f5f3ff; border: 1px solid #e9e5ff; border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+  padding: 14px 20px; margin-bottom: 18px; color: #4c1d95; font-size: 13px; line-height: 1.55;
+}
+.mpv-horario .h-ico {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; background: #ede9fe; color: #6d28d9;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.mpv-horario .h-tit { font-size: 14px; font-weight: 700; color: #5b21b6; margin-bottom: 2px; }
+.mpv-horario .h-hor { margin-top: 4px; font-size: 12.5px; color: #6d28d9; }
+.mpv .pub-card { margin-bottom: 0; }
+.mpv .exito .acciones { flex-wrap: wrap; }
+.mpv textarea { resize: vertical; }
+.mpv-tit { font-size: 14px; font-weight: 700; color: #123a7a; margin-bottom: 14px; }
+.mpv-tit i { margin-right: 8px; }
+
+/* Paso 2: el archivo ocupa todo el ancho; desde 700 px, 3 columnas
+   (tipo de documento · tipo de trámite · N° / folios · archivo / asunto) */
+.fgrid .c-archivo { grid-column: 1 / -1; }
+@media (min-width: 700px) {
+  .mpv .fgrid-doc { grid-template-columns: 1fr 1fr 1fr; }
+  .mpv .fgrid-doc .c-archivo { grid-column: span 2; }
+}
+
+/* Pantallas de menor alto: mismos colores y cabecera, menos espacios */
+@media (min-width: 561px) and (max-height: 860px) {
+  .mpv .pub-main { padding: 16px 16px 8px; }
+  .mpv .pub-hero { margin-bottom: 12px; }
+  .mpv .pub-hero h1 { font-size: 22px; }
+  .mpv .mpv-horario { padding: 10px 16px; margin-bottom: 12px; gap: 12px; }
+  .mpv .mpv-horario .h-ico { width: 32px; height: 32px; font-size: 15px; }
+  .mpv .pasos { margin-bottom: 12px; }
+  .mpv .pub-card { padding: 18px 22px; }
+  .mpv .mpv-tit { margin-bottom: 10px; }
+  .mpv .fgrid { gap: 10px 14px; }
+  .mpv label { margin-bottom: 4px; }
+  .mpv input, .mpv select, .mpv textarea { padding: 8px 12px; }
+  .mpv textarea { height: 56px; }
+  .mpv .acciones { margin-top: 14px; }
+  .mpv .pub-footer { padding: 8px 16px; }
+}
+/* Pantallas muy bajas (laptop 1366x768 con barras del navegador o zoom) */
+@media (min-width: 561px) and (max-height: 720px) {
+  .mpv .pub-main { padding-top: 10px; }
+  .mpv .pub-hero { margin-bottom: 8px; }
+  .mpv .pub-hero h1 { font-size: 20px; }
+  .mpv .pub-hero p { margin-top: 2px; }
+  .mpv .mpv-horario { padding: 8px 14px; margin-bottom: 8px; line-height: 1.45; }
+  .mpv .mpv-horario .h-hor { margin-top: 1px; }
+  .mpv .pasos { margin-bottom: 8px; }
+  .mpv .paso .pnum { width: 26px; height: 26px; }
+  .mpv .pub-card { padding: 12px 20px; }
+  .mpv .mpv-tit { margin-bottom: 8px; }
+  .mpv .fgrid { gap: 8px 14px; }
+  .mpv input, .mpv select, .mpv textarea { padding: 7px 11px; }
+  .mpv .hint { margin-top: 2px; }
+  .mpv textarea { height: 42px; }
+  .mpv .acciones { margin-top: 10px; }
+  .mpv .btn { padding: 8px 16px; }
+  .mpv .exito .ic { width: 52px; height: 52px; font-size: 24px; margin-bottom: 8px; }
+  .mpv .exito .expnum { margin: 8px 0; font-size: 26px; }
+  .mpv .pub-footer { padding: 6px 16px; }
+}
+
+/* ---- Selector con buscador (js/selector_buscable.js) ---- */
+.sb-oculto { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important; }
+.sb { position: relative; }
+.sb-campo {
+  width: 100%; display: flex; align-items: center; gap: 8px; text-align: left; cursor: pointer;
+  border: 1px solid #e2e8f0; border-radius: 9px; padding: 10px 12px; background: #fff;
+  font: inherit; font-size: 13.5px; color: #334155; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.sb-campo:hover { border-color: #cbd5e1; }
+.sb-campo:focus, .sb-abierto .sb-campo { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08); }
+.sb-valor { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-valor.sb-ph { color: #94a3b8; }
+.sb-flecha { color: #94a3b8; font-size: 16px; transition: transform .15s; }
+.sb-abierto .sb-flecha { transform: rotate(180deg); color: #2563eb; }
+.sb-panel {
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 50; width: 100%;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16); animation: sbIn .12s ease-out;
+}
+.sb-arriba .sb-panel { top: auto; bottom: calc(100% + 6px); }
+@keyframes sbIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.sb-buscar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; background: #f8fafc; }
+.sb-buscar i { color: #94a3b8; }
+.sb-buscar input { border: 0; padding: 4px 0; background: transparent; box-shadow: none !important; font-size: 13.5px; }
+.sb-lista { list-style: none; max-height: 260px; overflow-y: auto; padding: 6px; margin: 0; overscroll-behavior: contain; }
+.sb-op {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 9px 12px; border-radius: 8px; font-size: 13px; color: #334155; cursor: pointer; line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.sb-op + .sb-op { margin-top: 1px; }
+.sb-op mark { background: transparent; color: #1d4ed8; font-weight: 700; }
+.sb-op.sb-act { background: #eff6ff; color: #1e3a8a; }
+.sb-op.sb-sel { font-weight: 600; color: #1d4ed8; }
+.sb-op .fa-check { color: #2563eb; font-size: 12px; }
+.sb-pie {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 7px 12px; border-top: 1px solid #f1f5f9; background: #f8fafc; font-size: 11px; color: #94a3b8;
+}
+.sb-cuenta { font-weight: 600; color: #64748b; }
+.sb-teclas kbd {
+  display: inline-block; min-width: 18px; padding: 0 4px; margin: 0 1px; border: 1px solid #e2e8f0; border-bottom-width: 2px;
+  border-radius: 4px; background: #fff; font: 600 10px/16px inherit; color: #64748b; text-align: center;
+}
+@media (max-width: 560px), (hover: none) { .sb-teclas { display: none; } }
+.sb-nada { padding: 14px 10px; font-size: 12.5px; color: #94a3b8; text-align: center; }
+.sb-lista::-webkit-scrollbar { width: 8px; }
+.sb-lista::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; border: 2px solid #fff; }
+@media (min-width: 561px) and (max-height: 860px) { .mpv .sb-campo { padding: 8px 12px; } }
+@media (min-width: 561px) and (max-height: 720px) { .mpv .sb-campo { padding: 7px 11px; } }
+
+/* Botón "Presentar documento" mientras sube el archivo: se llena según el avance */
+.btn-p.btn-avance, .btn-p.btn-avance:disabled {
+  opacity: 1; min-width: 230px; justify-content: center;
+  background: linear-gradient(90deg, #1d4ed8 var(--avance, 0%), #60a5fa var(--avance, 0%));
+  border-color: #1d4ed8;
+}
