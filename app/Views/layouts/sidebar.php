@@ -58,3 +58,4 @@ $foto = FotoController::tieneFoto() ? url('foto-perfil') : '';
   </div>
 </div>
 <script src="<?= asset('assets/js/nav_nuevo.js') ?>"></script>
+<script src="<?= asset('assets/js/notificaciones.js') ?>" data-base="<?= h(url('')) ?>"></script>

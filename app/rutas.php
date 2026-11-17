@@ -19,9 +19,19 @@ $r->get('', 'InicioController@index');
 $r->post('oficina-trabajo', 'OficinaTrabajoController@cambiar', array('admin' => true));
 $r->get('foto-perfil', 'FotoController@perfil');
 
-// ---- Módulos del menú aún no migrados (etapas 2 a 6) ----
+// ---- Etapa 2: Recepción y Derivados ----
+$permRecepcion = array('permiso' => 'vistas/v_recepcion_proveido.php');
+$r->get('recepcion', 'RecepcionController@index', $permRecepcion + array('datos' => array('base' => 'recepcion')));
+$r->get('derivados', 'RecepcionController@index', $permRecepcion + array('datos' => array('base' => 'derivados')));
+$r->post('recepcion/accion', 'RecepcionController@accion', $permRecepcion);
+$r->get('adjunto', 'AdjuntoController@ver');
+$r->get('notificaciones', 'NotificacionController@consultar');
+
+// ---- Módulos del menú aún no migrados (etapas 3 a 6) ----
+$migradas = array('recepcion', 'derivados');
 foreach (MenuService::definicion() as $grupo) {
     foreach ($grupo['items'] as $it) {
+        if (in_array($it[1], $migradas, true)) continue;
         $r->get($it[1], 'PendienteController@modulo', array('permiso' => $it[3], 'datos' => array('ruta' => $it[1])));
     }
 }

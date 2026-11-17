@@ -30,6 +30,13 @@ $casos = array(
     array('Carpeta config/ bloqueada', 'config/database.php', null, 403),
     array('Carpeta storage/ bloqueada', 'storage/logs/', null, 403),
     array('POST de login sin token CSRF', 'login', array('usuario' => 'x', 'password' => 'y'), 403),
+    // Etapa 2
+    array('Derivados sin sesión lleva al login', 'derivados', null, 302),
+    array('Notificaciones sin sesión', 'notificaciones', null, 302),
+    array('Adjunto sin sesión', 'adjunto?c=reg&f=x.pdf', null, 302),
+    array('Acción de recepción sin sesión', 'recepcion/accion', array('carga_aciones' => '-'), 401),
+    array('JS de recepción', 'assets/js/recepcion.js', null, 200),
+    array('JS de notificaciones', 'assets/js/notificaciones.js', null, 200),
 );
 $fallas = 0;
 foreach ($casos as $c) {

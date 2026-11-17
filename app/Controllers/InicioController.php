@@ -24,6 +24,7 @@ class InicioController extends Controller
         }
         $this->vista('inicio/index', array(
             'titulo' => 'Inicio',
+            'cssExtra' => array('assets/css/dashboard.css'),   // solo Inicio: su .rowg es distinto al de Recepción
             'saludo' => $h < 12 ? 'Buenos días' : ($h < 19 ? 'Buenas tardes' : 'Buenas noches'),
             'fecha' => $dias[(int)date('N') - 1] . ' ' . date('j') . ' de ' . $meses[(int)date('n')] . ' de ' . date('Y'),
             'oficina' => OficinaModel::nombre($ofi),

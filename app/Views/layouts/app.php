@@ -1,6 +1,7 @@
 <?php
 /* Plantilla general de las pantallas internas: cabecera + menú lateral + contenido.
-   Variables: $titulo, $contenido (HTML de la vista), $cssExtra (array de CSS opcionales) */
+   Variables: $titulo, $contenido (HTML de la vista), $cssExtra (CSS opcionales),
+   $jsExtra (JS opcionales, al final), $bodyData (atributos data-* del body: ['endpoint' => ...]) */
 use App\Core\Auth;
 use App\Core\Csrf;
 use App\Core\Session;
@@ -18,14 +19,16 @@ $aviso = Session::flash('aviso');
   <link rel="stylesheet" href="<?= asset('assets/vendor/font-awesome/4.5.0/css/font-awesome.min.css') ?>" />
   <link rel="stylesheet" href="<?= asset('assets/css/sisgedo-theme.css') ?>" />
   <link rel="stylesheet" href="<?= asset('assets/css/v_recepcion_proveido.css') ?>" />
-  <link rel="stylesheet" href="<?= asset('assets/css/dashboard.css') ?>" />
   <?php foreach (isset($cssExtra) ? $cssExtra : array() as $css) { ?>
     <link rel="stylesheet" href="<?= asset($css) ?>" />
   <?php } ?>
   <script src="<?= asset('assets/vendor/jquery/jquery-2.1.4.min.js') ?>"></script>
 </head>
 
-<body data-csrf="<?= h(Csrf::token()) ?>" data-base="<?= h(url('')) ?>">
+<body data-csrf="<?= h(Csrf::token()) ?>" data-base="<?= h(url('')) ?>"<?php
+  foreach (isset($bodyData) ? $bodyData : array() as $k => $v) {
+    echo ' data-' . h(strtolower(preg_replace('~([a-z])([A-Z])~', '$1-$2', $k))) . '="' . h($v) . '"';
+  } ?>>
   <div class="app">
     <div class="hdr">
       <div class="l">
@@ -53,6 +56,9 @@ $aviso = Session::flash('aviso');
       <?= $contenido ?>
     </div>
   </div>
+  <?php foreach (isset($jsExtra) ? $jsExtra : array() as $js) { ?>
+    <script src="<?= asset($js) ?>"></script>
+  <?php } ?>
   <style>
     .mvc-aviso { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 2000; background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; padding: 10px 16px; border-radius: 10px; font-size: 13px; box-shadow: 0 8px 24px rgba(15, 23, 42, .15); }
   </style>
