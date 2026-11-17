@@ -1,5 +1,8 @@
 /config/db_clave.php
 /config/correo_clave.php
+# Credenciales de Firma Perú (PCM): nunca al repositorio
+/config/firmaperu/*
+!/config/firmaperu/.gitkeep
 /storage/logs/*
 !/storage/logs/.gitkeep
 # Documentos y fotos (datos de los ciudadanos): nunca al repositorio

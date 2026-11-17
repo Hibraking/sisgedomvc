@@ -76,7 +76,8 @@ Las carpetas `app/`, `config/`, `storage/` y `tests/` están bloqueadas desde la
 - Numeración de emitidos (`NumeracionService`): automática por oficina + tipo + año ({NUM}-{AÑO}-{SIGLAS}),
   manual sin repetir; el número se reserva después de validar.
 - Firma Perú: `firma` (iniciar/estado con sesión; param/documento/subir para el firmador con token de un
-  solo uso). Se activa sola con `fwAuthorization.json` en `<www>/firmaperu/` (config/firmaperu.php).
+  solo uso). Se activa sola al copiar `fwAuthorization.json` (credenciales de la PCM) en `config/firmaperu/`
+  (bloqueada para la web y fuera de Git).
 - Cargos PDF: `cargo?exp=` (con sesión) o `cargo?c=CÓDIGO` (ciudadano), `cargo-interno?exp=`. Dibujo en
   `app/Pdf/`. TCPDF se carga desde la carpeta de sisgedov2 (`PdfService`). Direcciones antiguas
   (`pdf/cargo.php`, `pdf/cargo_interno.php`, `tcpdf/examples/cargo_externo.php`) redirigen (301).
@@ -108,7 +109,8 @@ Las carpetas `app/`, `config/`, `storage/` y `tests/` están bloqueadas desde la
 - Al terminar el traslado, poner `'ruta_archivos_antigua' => null`.
 
 ## Paso a producción (resumen)
-1. Subir sisgedomvc y crear `config/db_clave.php` y `config/correo_clave.php` (no van en Git).
+1. Subir sisgedomvc y crear `config/db_clave.php` y `config/correo_clave.php` (no van en Git); cuando la PCM
+   entregue las credenciales de Firma Perú, copiar `fwAuthorization.json` en `config/firmaperu/`.
 2. Probar con la carpeta antigua como respaldo (los adjuntos antiguos se siguen viendo).
 3. Cuando sisgedov2 deje de usarse: `php herramientas/trasladar_archivos.php --mover`
    (si no hay consola: en el Administrador de archivos de cPanel mover el contenido de
