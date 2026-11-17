@@ -74,6 +74,99 @@ class NumeracionService
         return $s !== '' ? mb_substr($s, 0, 14) : 'OF' . (int)$idoficina;
     }
 
+    /* ---------------- Documentos emitidos (correlativo por oficina + tipo + año) ---------------- */
+
+    /** Formato del número emitido: {NUM} correlativo, {ANIO} año, {SIGLAS} de la oficina. Ej.: 045-2026-MPH/GM */
+    const FORMATO_NUMERO = '{NUM}-{ANIO}-{SIGLAS}';
+    const DIGITOS_NUMERO = 3;
+
+    /** Siglas (nomenclatura) de la oficina; '' si no se configuraron. */
+    public static function siglasOficina($idoficina)
+    {
+        if (!self::migracionOk()) return '';
+        $v = Database::valor("SELECT COALESCE(TRIM(siglas), '') FROM oficinas WHERE idoficinas = ?", array((int)$idoficina));
+        return $v === false ? '' : (string)$v;
+    }
+
+    /** Correlativo de un número escrito a mano, solo si es del año indicado ("027-2026-MPH/GM" -> 27). */
+    public static function extraerCorrelativo($numero, $anio)
+    {
+        if (preg_match('/(\d{1,6})\s*-\s*(\d{4})/u', (string)$numero, $m)) {
+            return ((int)$m[2] === (int)$anio) ? (int)$m[1] : 0;
+        }
+        return 0;
+    }
+
+    private static function semillaEmitidos($idoficina, $iddocumento, $anio)
+    {
+        $max = 0;
+        foreach (Database::filas("SELECT numero FROM docs_emitidos WHERE idoficina_registro = ? AND iddocumento = ? AND fecha >= ?",
+            array((int)$idoficina, (int)$iddocumento, $anio . '-01-01'), \PDO::FETCH_COLUMN) as $num) {
+            $max = max($max, self::extraerCorrelativo($num, $anio));
+        }
+        return $max;
+    }
+
+    private static function claveEmitidos($idoficina, $iddocumento, $anio)
+    {
+        return 'EMI-' . (int)$idoficina . '-' . (int)$iddocumento . '-' . (int)$anio;
+    }
+
+    private static function formatearNumero($n, $anio, $siglas)
+    {
+        $num = str_pad((string)(int)$n, self::DIGITOS_NUMERO, '0', STR_PAD_LEFT);
+        return rtrim(str_replace(array('{NUM}', '{ANIO}', '{SIGLAS}'), array($num, (string)$anio, $siglas), self::FORMATO_NUMERO), '-/ ');
+    }
+
+    /** Vista previa del próximo número (NO lo reserva). */
+    public static function previsualizarEmitido($idoficina, $iddocumento)
+    {
+        $anio = (int)date('Y');
+        $siglas = self::siglasOficina($idoficina);
+        if ($siglas === '') {
+            return array('ok' => false, 'numero' => '', 'correlativo' => 0, 'siglas' => '',
+                'mensaje' => self::migracionOk()
+                    ? 'Su oficina no tiene siglas configuradas (Mantenimiento > Oficinas). Ingrese el número manualmente.'
+                    : 'La numeración automática aún no está habilitada (falta la migración 001). Ingrese el número manualmente.');
+        }
+        $actual = self::actual(self::claveEmitidos($idoficina, $iddocumento, $anio));
+        if ($actual === null) {
+            $actual = self::semillaEmitidos($idoficina, $iddocumento, $anio);
+        }
+        $n = $actual + 1;
+        return array('ok' => true, 'numero' => self::formatearNumero($n, $anio, $siglas), 'correlativo' => $n, 'siglas' => $siglas, 'mensaje' => '');
+    }
+
+    /** Reserva y devuelve el siguiente número; null si la oficina no tiene siglas. */
+    public static function reservarEmitido($idoficina, $iddocumento)
+    {
+        $anio = (int)date('Y');
+        $siglas = self::siglasOficina($idoficina);
+        if ($siglas === '') return null;
+        $clave = self::claveEmitidos($idoficina, $iddocumento, $anio);
+        $semilla = self::actual($clave) === null ? self::semillaEmitidos($idoficina, $iddocumento, $anio) : 0;
+        return self::formatearNumero(self::siguiente($clave, $semilla), $anio, $siglas);
+    }
+
+    /** Número manual: adelanta el contador para no repetirlo después. */
+    public static function registrarNumeroManual($idoficina, $iddocumento, $numero)
+    {
+        if (!self::migracionOk()) return;
+        $anio = (int)date('Y');
+        $n = self::extraerCorrelativo($numero, $anio);
+        if ($n > 0) {
+            Database::consulta("INSERT INTO sgd_secuencia (clave, ultimo) VALUES (?, ?) ON DUPLICATE KEY UPDATE ultimo = GREATEST(ultimo, ?)",
+                array(self::claveEmitidos($idoficina, $iddocumento, $anio), $n, $n));
+        }
+    }
+
+    /** ¿Ya existe ese número para la oficina y tipo de documento este año? */
+    public static function numeroEmitidoExiste($idoficina, $iddocumento, $numero)
+    {
+        return (int)Database::valor("SELECT COUNT(*) FROM docs_emitidos WHERE idoficina_registro = ? AND iddocumento = ? AND fecha >= ? AND TRIM(numero) = TRIM(?)",
+            array((int)$idoficina, (int)$iddocumento, date('Y') . '-01-01', (string)$numero)) > 0;
+    }
+
     /** Número de expediente (mesa de partes presencial y virtual): AÑO + correlativo de 4+ dígitos. */
     public static function nuevoExpediente()
     {

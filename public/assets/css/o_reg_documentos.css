@@ -1,0 +1,54 @@
+/* Ajustes de la vista de Registro (mesa de partes) sobre v_recepcion_proveido.css */
+
+/* Tabla de 8 columnas: Expediente | Documento | Remitente | Asunto | Destino | Estado | Fecha | Acciones */
+.rowg {
+  grid-template-columns: 92px minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr) 116px 104px 108px;
+}
+
+/* Botón de acción rojo (eliminar) */
+.ab-r {
+  color: #dc2626;
+}
+.ab-r:hover {
+  background: #fef2f2;
+}
+
+/* Modal grande del registro */
+.box-lg {
+  width: 640px;
+  max-width: calc(100vw - 32px);
+}
+.mr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+}
+.mr-grid > div:first-child {
+  grid-column: 1 / -1;
+}
+/* (El selector de oficinas ahora usa .ofi-lista / .ofi-item del CSS compartido) */
+#mr_fichero {
+  font-size: 12px;
+  color: var(--sisgedo-color-muted, #64748b);
+}
+
+/* Etiqueta NEW: documento de Mesa de Partes Virtual sin revisar/derivar */
+.b-new {
+  background: #dc2626;
+  color: #fff;
+  gap: 3px;
+  animation: bnew-pulse 1.6s ease-in-out infinite;
+}
+.b-new .fa {
+  font-size: 8px;
+}
+.row.row-nuevo {
+  box-shadow: inset 3px 0 0 #dc2626;
+}
+@keyframes bnew-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45); }
+  50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .b-new { animation: none; }
+}
